@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
-  const [form, setForm] = useState({ subject: '', topic: '', hours: '' });
+  const [form, setForm] = useState({ subject: '', topic: '', date: '', time: '' });
   const API = 'http://localhost:5000/tasks';
 
   const loadTasks = () => fetch(API).then(r => r.json()).then(setTasks);
@@ -16,7 +16,7 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     });
-    setForm({ subject: '', topic: '', hours: '' });
+    setForm({ subject: '', topic: '', date: '', time: '' });
     loadTasks();
   };
 
@@ -26,22 +26,28 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: 450, margin: '40px auto', fontFamily: 'Arial, sans-serif' }}>
-      <h2>StudySync Planner</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
+    <div style={{ maxWidth: 480, margin: '30px auto', fontFamily: 'Arial, sans-serif' }}>
+      <h2>📅 StudySync - Daily Study Schedule</h2>
+      <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 20 }}>
         <input placeholder="Subject" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
         <input placeholder="Topic" value={form.topic} onChange={e => setForm({ ...form, topic: e.target.value })} required />
-        <input placeholder="Hrs" type="number" style={{ width: 50 }} value={form.hours} onChange={e => setForm({ ...form, hours: e.target.value })} />
-        <button type="submit">Add</button>
+        <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+        <input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required />
+        <button type="submit" style={{ gridColumn: 'span 2', padding: 8, background: '#007bff', color: '#fff', border: 'none', borderRadius: 4 }}>Add to Schedule</button>
       </form>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <h3>Scheduled Sessions</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {tasks.map(t => (
-          <li key={t._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-            <span><b>{t.subject}</b>: {t.topic} ({t.hours || 1} hr)</span>
-            <button onClick={() => handleDelete(t._id)} style={{ color: 'red', cursor: 'pointer' }}>Delete</button>
-          </li>
+          <div key={t._id} style={{ border: '1px solid #ddd', padding: 12, borderRadius: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f9f9f9' }}>
+            <div>
+              <div style={{ fontSize: 13, color: '#555' }}>🗓️ {t.date} | ⏰ {t.time}</div>
+              <div style={{ fontSize: 16, fontWeight: 'bold' }}>{t.subject}</div>
+              <div style={{ color: '#444' }}>{t.topic}</div>
+            </div>
+            <button onClick={() => handleDelete(t._id)} style={{ color: 'red', border: '1px solid red', background: '#fff', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}>Delete</button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

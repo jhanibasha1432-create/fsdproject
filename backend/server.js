@@ -6,17 +6,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection (Supports Cloud MongoDB Atlas or Local MongoDB)
+// MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/studysync';
 mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error(err));
 
-// Schema & Model
+// Schema & Model (Includes Schedule Date & Time)
 const Task = mongoose.model('Task', new mongoose.Schema({
   subject: String,
   topic: String,
-  hours: Number
+  date: String,
+  time: String
 }));
 
 // REST Routes
